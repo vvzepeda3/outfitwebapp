@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+        body {
+            min-height: 100vh;
+            background: #0f0e0d;
+            display: flex;
+            flex-direction: column;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+
+        .page-header {
+            padding: 20px 32px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .logo-text {
+            font-family: 'DM Serif Display', serif;
+            font-size: 20px;
+            color: #e8e2d9;
+            letter-spacing: 0.02em;
+        }
+
+
+        .logo-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #c17a3d;
+            border-radius: 50%;
+            margin-left: 4px;
+            vertical-align: middle;
+            position: relative;
+            top: -2px;
+        }
+
+
+        .page-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+
+        .login-card {
+            width: 100%;
+            max-width: 380px;
+        }
+
+
+        .card-heading {
+            font-family: 'DM Serif Display', serif;
+            font-size: 30px;
+            color: #e8e2d9;
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+
+
+        .card-sub {
+            font-size: 13px;
+            color: rgba(232, 226, 217, 0.45);
+            margin-bottom: 28px;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+
+        .field-group {
+            margin-bottom: 18px;
+        }
+
+
+        .field-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(232, 226, 217, 0.45);
+            margin-bottom: 8px;
+        }
+
+
+        .field-input {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 11px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: #e8e2d9;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+
+        .field-input:focus {
+            border-color: rgba(193, 122, 61, 0.6);
+            background: rgba(255,255,255,0.06);
+        }
+
+
+        .field-input::placeholder {
+            color: rgba(232, 226, 217, 0.2);
+        }
+
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 12px;
+            background: #c17a3d;
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: opacity 0.15s;
+        }
+
+
+        .submit-btn:hover { opacity: 0.88; }
+        .submit-btn:active { opacity: 0.75; }
+
+
+        .divider {
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        .divider-line {
+            flex: 1;
+            height: 0.5px;
+            background: rgba(255,255,255,0.07);
+        }
+
+
+        .divider-text {
+            font-size: 11px;
+            color: rgba(232, 226, 217, 0.25);
+            letter-spacing: 0.05em;
+        }
+
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+
+        .back-link {
+            font-size: 12px;
+            color: rgba(232, 226, 217, 0.35);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+
+        .back-link:hover { color: rgba(232, 226, 217, 0.7); }
+    </style>
+</head>
+<body>
+
+
+    <div class="page-header">
+        <span class="logo-text">UHH APP NAME<span class="logo-dot"></span></span>
+    </div>
+
+
+    <div class="page-body">
+        <div class="login-card">
+            <h1 class="card-heading">Create account.</h1>
+            <p class="card-sub">Sign up to get started</p>
+
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="error-banner">{{ messages[0] }}</div>
+                {% endif %}
+            {% endwith %}
+
+
+            <form method="POST">
+                <div class="field-group">
+                    <label class="field-label" for="username">Username</label>
+                    <input class="field-input" type="text" id="username" name="username" placeholder="your_username" required>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="password">Password</label>
+                    <input class="field-input" type="password" id="password" name="password" placeholder="min. 8 characters" required>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="confirm">Confirm Password</label>
+                    <input class="field-input" type="password" id="confirm" name="confirm" placeholder="••••••••" required>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="campus">Campus</label>
+                    <div style="position: relative;">
+                        <select class="field-input" id="campus" name="campus" required style="appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 36px; color: #2c2c2a;" onchange="this.style.color='#2c2c2a'">
+                            <option value="" disabled selected>Select your campus</option>
+                            <option value="UC Berkeley">UC Berkeley</option>
+                            <option value="UC Davis">UC Davis</option>
+                            <option value="UC Irvine">UC Irvine</option>
+                            <option value="UC Los Angeles">UC Los Angeles</option>
+                            <option value="UC Merced">UC Merced</option>
+                            <option value="UC Riverside">UC Riverside</option>
+                            <option value="UC San Diego">UC San Diego</option>
+                            <option value="UC San Francisco">UC San Francisco</option>
+                            <option value="UC Santa Barbara">UC Santa Barbara</option>
+                            <option value="UC Santa Cruz">UC Santa Cruz</option>
+                        </select>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(232,226,217,0.45)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+                <button class="submit-btn" type="submit">Create Account</button>
+            </form>
+
+
+            <div class="divider">
+                <div class="divider-line"></div>
+                <span class="divider-text">or</span>
+                <div class="divider-line"></div>
+            </div>
+
+
+            <div class="card-footer">
+                <a class="back-link" href="/login">← Back to sign in</a>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
+
