@@ -843,7 +843,10 @@ def delete_post(post_id):
 # ─────────────────────────────────────────────────────────────────────────────
 # Entry point
 # ─────────────────────────────────────────────────────────────────────────────
-
+    # Run on startup
+with app.app_context():
+    init_db()
 if __name__ == "__main__":
     init_db()
     app.run(debug=True, port=5000)
+   
