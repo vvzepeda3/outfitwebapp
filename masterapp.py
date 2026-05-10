@@ -718,9 +718,9 @@ def upload_post():
     photo      = request.files.get("photo")
     photo_path = None
 
-if photo and photo.filename and allowed_file(photo.filename):
-    result = cloudinary.uploader.upload(photo)
-    photo_path = result["secure_url"]
+    if photo and photo.filename and allowed_file(photo.filename):
+        result = cloudinary.uploader.upload(photo)
+        photo_path = result["secure_url"]
 
     conn = get_db()
     with conn.cursor() as cur:
