@@ -977,7 +977,7 @@
                     </div>
 
                     <div class="post-footer">
-                        <span class="post-date">{{ post.created_at[:10] if post.created_at else '' }}</span>
+                        <span class="post-date">{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <form class="upvote-form"
                                   action="{{ url_for('upvote', post_id=post.id) }}"
@@ -1108,7 +1108,7 @@
                         {% endif %}
                     </div>
                     <div class="podium-footer">
-                        <span class="podium-date">{{ post.created_at[:10] if post.created_at else '' }}</span>
+                        <span class="podium-date">{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}</span>
                         <form class="upvote-form"
                               action="{{ url_for('upvote', post_id=post.id) }}"
                               method="POST">
@@ -1152,7 +1152,7 @@
                         <p class="recent-caption">{{ post.caption }}</p>
                         {% endif %}
                     </div>
-                    <span class="recent-date">{{ post.created_at[:10] if post.created_at else '' }}</span>
+                    <span class="recent-date">{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}</span>
                     <form class="upvote-form"
                           action="{{ url_for('upvote', post_id=post.id) }}"
                           method="POST">

@@ -451,7 +451,7 @@
       </div>
 
       <div class="post-footer">
-        <span class="post-date">{{ post.created_at[:10] if post.created_at else '' }}</span>
+        <span class="post-date">{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}</span>
 
         <div class="vote-row">
           <form class="upvote-form" action="{{ url_for('upvote', post_id=post.id) }}" method="POST">
@@ -536,7 +536,7 @@
 
       <div class="post-footer">
         <div>
-          <span class="post-date">{{ post.created_at[:10] if post.created_at else '' }}</span>
+          <span class="post-date">{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}</span>
           <a href="{{ url_for('profile', uid=post.user_id) }}"
              style="display:block; font-size:11px; color:var(--navy-light); text-decoration:none; margin-top:2px;">
             @{{ post.userName }}
