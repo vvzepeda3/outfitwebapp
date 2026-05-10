@@ -7,6 +7,14 @@ from werkzeug.utils import secure_filename
 import psycopg2
 import psycopg2.extras
 from functools import wraps
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config(
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key    = os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret = os.environ.get("CLOUDINARY_API_SECRET"),
+)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "replace_with_a_fixed_secret_in_production")
@@ -156,8 +164,7 @@ def attach_items_to_posts(conn, posts_list):
             cur.execute("SELECT id, name, brand FROM items WHERE post_id = %s", (post["id"],))
             db_items = cur.fetchall()
         post_dict["items"]    = [{"id": i["id"], "name": i["name"], "brand": i["brand"]} for i in db_items]
-        post_dict["imageUrl"] = url_for("static", filename=post["photo_path"]) if post["photo_path"] else ""
-        post_dict["userName"] = post.get("username", "")
+post_dict["imageUrl"] = post["photo_path"] if post["photo_path"] else ""        post_dict["userName"] = post.get("username", "")
 
         if post_dict.get("links"):
             with conn.cursor() as cur:
@@ -711,12 +718,9 @@ def upload_post():
     photo      = request.files.get("photo")
     photo_path = None
 
-    if photo and photo.filename and allowed_file(photo.filename):
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        ext      = secure_filename(photo.filename).rsplit(".", 1)[1].lower()
-        filename = f"{uuid.uuid4().hex}.{ext}"
-        photo.save(os.path.join(UPLOAD_FOLDER, filename))
-        photo_path = f"uploads/{filename}"
+if photo and photo.filename and allowed_file(photo.filename):
+    result = cloudinary.uploader.upload(photo)
+    photo_path = result["secure_url"]
 
     conn = get_db()
     with conn.cursor() as cur:
