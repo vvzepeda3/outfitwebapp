@@ -827,7 +827,7 @@ def delete_post(post_id):
         post = cur.fetchone()
 
         if post["photo_path"] and not post["photo_path"].startswith("http"):
-        full_path = os.path.join(BASE_DIR, "static", post["photo_path"])
+            full_path = os.path.join(BASE_DIR, "static", post["photo_path"])
         if os.path.exists(full_path):
             os.remove(full_path)
             cur.execute("DELETE FROM items       WHERE post_id = %s", (post_id,))
