@@ -1,0 +1,47 @@
+/* Styles for the main application */
+/* ─────────────────────────────────────────────────────────────────────────────
+   OOTD — Global Stylesheet
+   All page-specific styles live in <style> blocks inside each template.
+   This file holds only truly shared, cross-page rules.
+───────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Error / flash banners (used on register + login) ── */
+.error-banner {
+    background: #fff0ee;
+    border: 0.5px solid #f5c2ba;
+    border-radius: 10px;
+    color: #c0442e;
+    font-size: 13px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+}
+
+.flash-banner {
+    background: rgba(80, 160, 80, 0.12);
+    border: 0.5px solid rgba(80, 160, 80, 0.3);
+    border-radius: 10px;
+    color: #2e7d32;
+    font-size: 13px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+}
+
+/* ── Scrollbar hide utility ── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

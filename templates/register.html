@@ -2,91 +2,242 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Account</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — OOTD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+            --navy: #1c2b3a;
+            --navy-mid: #2c3f52;
+            --navy-light: #3d5470;
+            --cream: #f8f6f2;
+            --yellow: #e8c84a;
+            --yellow-muted: #f0d878;
+            --text-dark: #1c2b3a;
+            --text-mid: #5a6e80;
+            --text-soft: #8fa0b0;
+            --white: #ffffff;
+            --border: rgba(28, 43, 58, 0.1);
+        }
+
+        html, body { height: 100%; }
 
         body {
             min-height: 100vh;
-            background: #0f0e0d;
+            background: var(--cream);
+            display: flex;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-dark);
+        }
+
+        /* ── LEFT PANEL ── */
+        .left-panel {
+            width: 52%;
+            background: var(--navy);
             display: flex;
             flex-direction: column;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-
-        .page-header {
-            padding: 20px 32px;
-            border-bottom: 0.5px solid rgba(255,255,255,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-
-        .logo-text {
-            font-family: 'DM Serif Display', serif;
-            font-size: 20px;
-            color: #e8e2d9;
-            letter-spacing: 0.02em;
-        }
-
-
-        .logo-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: #c17a3d;
-            border-radius: 50%;
-            margin-left: 4px;
-            vertical-align: middle;
+            justify-content: space-between;
+            padding: 48px 52px;
             position: relative;
-            top: -2px;
+            overflow: hidden;
         }
 
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border: 1px solid rgba(232, 200, 74, 0.12);
+            border-radius: 50%;
+            top: -100px;
+            right: -80px;
+        }
 
-        .page-body {
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 50%;
+            bottom: 60px;
+            left: -60px;
+        }
+
+        .panel-logo {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--yellow);
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel-content {
+            position: relative;
+            z-index: 1;
             flex: 1;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 0 40px;
+        }
+
+        .panel-eyebrow {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--yellow);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-eyebrow::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 1px;
+            background: var(--yellow);
+        }
+
+        .panel-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 400;
+            color: var(--white);
+            line-height: 1.18;
+            margin-bottom: 24px;
+        }
+
+        .panel-headline em {
+            font-style: italic;
+            color: var(--yellow-muted);
+        }
+
+        .panel-body {
+            font-size: 14px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.75;
+            max-width: 320px;
+        }
+
+        .panel-steps {
+            margin-top: 44px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .step-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 0.5px solid rgba(232, 200, 74, 0.35);
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 24px;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--yellow-muted);
+            flex-shrink: 0;
+            margin-top: 1px;
         }
 
-
-        .login-card {
-            width: 100%;
-            max-width: 380px;
-        }
-
-
-        .card-heading {
-            font-family: 'DM Serif Display', serif;
-            font-size: 30px;
-            color: #e8e2d9;
-            margin-bottom: 6px;
-            font-style: italic;
-        }
-
-
-        .card-sub {
+        .step-text {
             font-size: 13px;
-            color: rgba(232, 226, 217, 0.45);
-            margin-bottom: 28px;
+            color: rgba(255,255,255,0.45);
             font-weight: 300;
-            letter-spacing: 0.02em;
+            line-height: 1.5;
         }
 
+        .step-text strong {
+            color: rgba(255,255,255,0.75);
+            font-weight: 400;
+        }
 
+        .panel-footer {
+            font-size: 11px;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 0.04em;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── RIGHT PANEL ── */
+        .right-panel {
+            width: 48%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 52px 52px;
+            background: var(--cream);
+            overflow-y: auto;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .login-eyebrow {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            margin-bottom: 10px;
+        }
+
+        .login-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--navy);
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .login-sub {
+            font-size: 13px;
+            color: var(--text-soft);
+            font-weight: 300;
+            margin-bottom: 32px;
+        }
+
+        /* Flash / error banner */
+        .error-banner {
+            background: #fff0ee;
+            border: 0.5px solid #f5c2ba;
+            border-radius: 10px;
+            color: #c0442e;
+            font-size: 13px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Fields */
         .field-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
-
 
         .field-label {
             display: block;
@@ -94,110 +245,238 @@
             font-weight: 500;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: rgba(232, 226, 217, 0.45);
-            margin-bottom: 8px;
+            color: var(--text-mid);
+            margin-bottom: 7px;
         }
 
+        .field-wrap {
+            position: relative;
+        }
 
         .field-input {
             width: 100%;
-            background: rgba(255,255,255,0.04);
-            border: 0.5px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 11px 14px;
+            background: var(--white);
+            border: 0.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 44px 12px 14px;
             font-family: 'DM Sans', sans-serif;
             font-size: 14px;
-            color: #e8e2d9;
+            color: var(--text-dark);
             outline: none;
-            transition: border-color 0.2s, background 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
         }
-
 
         .field-input:focus {
-            border-color: rgba(193, 122, 61, 0.6);
-            background: rgba(255,255,255,0.06);
+            border-color: var(--navy-light);
+            box-shadow: 0 0 0 3px rgba(28, 43, 58, 0.07);
         }
 
+        .field-input::placeholder { color: #c0cdd8; }
 
-        .field-input::placeholder {
-            color: rgba(232, 226, 217, 0.2);
+        /* Select specific */
+        select.field-input {
+            cursor: pointer;
+            padding-right: 36px;
+            color: var(--text-dark);
         }
 
+        select.field-input:invalid,
+        select.field-input option[value=""] {
+            color: #c0cdd8;
+        }
 
+        select.field-input option {
+            color: var(--text-dark);
+        }
+
+        .select-chevron {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--text-soft);
+        }
+
+        .select-chevron svg {
+            display: block;
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Eye toggle */
+        .eye-toggle {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            color: var(--text-soft);
+            transition: color 0.18s;
+        }
+
+        .eye-toggle:hover { color: var(--navy); }
+
+        .eye-toggle svg {
+            width: 17px;
+            height: 17px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Submit */
         .submit-btn {
             width: 100%;
             margin-top: 8px;
-            padding: 12px;
-            background: #c17a3d;
+            padding: 13px;
+            background: var(--navy);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-family: 'DM Sans', sans-serif;
             font-size: 14px;
             font-weight: 500;
-            color: #fff;
+            color: var(--white);
             cursor: pointer;
-            letter-spacing: 0.02em;
-            transition: opacity 0.15s;
+            letter-spacing: 0.03em;
+            transition: background 0.18s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
+        .submit-btn:hover { background: var(--navy-mid); }
+        .submit-btn:active { transform: scale(0.987); }
 
-        .submit-btn:hover { opacity: 0.88; }
-        .submit-btn:active { opacity: 0.75; }
+        .submit-arrow {
+            opacity: 0.6;
+            font-size: 16px;
+            transition: transform 0.18s, opacity 0.18s;
+            display: inline-block;
+        }
 
+        .submit-btn:hover .submit-arrow {
+            transform: translateX(3px);
+            opacity: 1;
+        }
 
+        /* Divider */
         .divider {
-            margin: 24px 0;
+            margin: 22px 0;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-
         .divider-line {
             flex: 1;
             height: 0.5px;
-            background: rgba(255,255,255,0.07);
+            background: var(--border);
         }
-
 
         .divider-text {
             font-size: 11px;
-            color: rgba(232, 226, 217, 0.25);
-            letter-spacing: 0.05em;
+            color: var(--text-soft);
+            letter-spacing: 0.06em;
         }
 
-
+        /* Footer */
         .card-footer {
             display: flex;
             align-items: center;
-            justify-content: space-between;
         }
-
 
         .back-link {
-            font-size: 12px;
-            color: rgba(232, 226, 217, 0.35);
+            font-size: 13px;
+            color: var(--navy);
             text-decoration: none;
-            transition: color 0.2s;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(28, 43, 58, 0.2);
+            padding-bottom: 1px;
+            transition: border-color 0.18s, color 0.18s;
         }
 
+        .back-link:hover {
+            color: var(--navy-light);
+            border-color: var(--navy-light);
+        }
 
-        .back-link:hover { color: rgba(232, 226, 217, 0.7); }
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .left-panel {
+                width: 100%;
+                padding: 36px 28px;
+                min-height: 220px;
+            }
+            .panel-headline { font-size: 28px; }
+            .panel-content { padding: 28px 0 16px; }
+            .panel-steps { display: none; }
+            .right-panel {
+                width: 100%;
+                padding: 40px 28px;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- ── LEFT PANEL ── -->
+    <div class="left-panel">
+        <div class="panel-logo">OOTD</div>
 
-    <div class="page-header">
-        <span class="logo-text">UHH APP NAME<span class="logo-dot"></span></span>
+        <div class="panel-content">
+            <div class="panel-eyebrow">Join the community</div>
+            <h2 class="panel-headline">
+                Your campus,<br>
+                your <em>style,</em><br>
+                your feed.
+            </h2>
+            <p class="panel-body">
+                Share your daily outfit and see what everyone around campus is wearing. It only takes a minute to get started.
+            </p>
+
+            <div class="panel-steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-text"><strong>Create your account</strong> — pick a username and set your password.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-text"><strong>Choose your campus</strong> — see fits from your school only.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-text"><strong>Post your OOTD</strong> — and start getting inspired.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">© OOTD — Outfit of the Day</div>
     </div>
 
+    <!-- ── RIGHT PANEL ── -->
+    <div class="right-panel">
+        <div class="login-box">
 
-    <div class="page-body">
-        <div class="login-card">
-            <h1 class="card-heading">Create account.</h1>
-            <p class="card-sub">Sign up to get started</p>
-
+            <div class="login-eyebrow">Get started</div>
+            <h1 class="login-heading">Create an account.</h1>
+            <p class="login-sub">Join your campus style community.</p>
 
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -205,24 +484,55 @@
                 {% endif %}
             {% endwith %}
 
-
             <form method="POST">
+
                 <div class="field-group">
                     <label class="field-label" for="username">Username</label>
-                    <input class="field-input" type="text" id="username" name="username" placeholder="your_username" required>
+                    <div class="field-wrap">
+                        <input class="field-input" type="text" id="username" name="username" placeholder="your_username" required>
+                    </div>
                 </div>
+
                 <div class="field-group">
                     <label class="field-label" for="password">Password</label>
-                    <input class="field-input" type="password" id="password" name="password" placeholder="min. 8 characters" required>
+                    <div class="field-wrap">
+                        <input class="field-input" type="password" id="password" name="password" placeholder="min. 8 characters" required>
+                        <button type="button" class="eye-toggle" id="eye-btn-1" aria-label="Show password">
+                            <svg id="icon-eye-1" viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg id="icon-eye-off-1" viewBox="0 0 24 24" style="display:none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                                <line x1="1" y1="1" x2="23" y2="23"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+
                 <div class="field-group">
                     <label class="field-label" for="confirm">Confirm Password</label>
-                    <input class="field-input" type="password" id="confirm" name="confirm" placeholder="••••••••" required>
+                    <div class="field-wrap">
+                        <input class="field-input" type="password" id="confirm" name="confirm" placeholder="••••••••" required>
+                        <button type="button" class="eye-toggle" id="eye-btn-2" aria-label="Show password">
+                            <svg id="icon-eye-2" viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg id="icon-eye-off-2" viewBox="0 0 24 24" style="display:none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                                <line x1="1" y1="1" x2="23" y2="23"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+
                 <div class="field-group">
                     <label class="field-label" for="campus">Campus</label>
-                    <div style="position: relative;">
-                        <select class="field-input" id="campus" name="campus" required style="appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 36px; color: #2c2c2a;" onchange="this.style.color='#2c2c2a'">
+                    <div class="field-wrap">
+                        <select class="field-input" id="campus" name="campus" required>
                             <option value="" disabled selected>Select your campus</option>
                             <option value="UC Berkeley">UC Berkeley</option>
                             <option value="UC Davis">UC Davis</option>
@@ -231,18 +541,21 @@
                             <option value="UC Merced">UC Merced</option>
                             <option value="UC Riverside">UC Riverside</option>
                             <option value="UC San Diego">UC San Diego</option>
-                            <option value="UC San Francisco">UC San Francisco</option>
                             <option value="UC Santa Barbara">UC Santa Barbara</option>
                             <option value="UC Santa Cruz">UC Santa Cruz</option>
                         </select>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(232,226,217,0.45)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+                        <span class="select-chevron" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
                     </div>
                 </div>
-                <button class="submit-btn" type="submit">Create Account</button>
-            </form>
 
+                <button class="submit-btn" type="submit">
+                    Create Account
+                    <span class="submit-arrow">→</span>
+                </button>
+
+            </form>
 
             <div class="divider">
                 <div class="divider-line"></div>
@@ -250,14 +563,31 @@
                 <div class="divider-line"></div>
             </div>
 
-
             <div class="card-footer">
                 <a class="back-link" href="/login">← Back to sign in</a>
             </div>
+
         </div>
     </div>
 
+    <script>
+        function makeEyeToggle(btnId, inputId, eyeId, eyeOffId) {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+            const eye = document.getElementById(eyeId);
+            const eyeOff = document.getElementById(eyeOffId);
+            btn.addEventListener('click', () => {
+                const hidden = input.type === 'password';
+                input.type = hidden ? 'text' : 'password';
+                eye.style.display = hidden ? 'none' : 'block';
+                eyeOff.style.display = hidden ? 'block' : 'none';
+                btn.setAttribute('aria-label', hidden ? 'Hide password' : 'Show password');
+            });
+        }
+
+        makeEyeToggle('eye-btn-1', 'password', 'icon-eye-1', 'icon-eye-off-1');
+        makeEyeToggle('eye-btn-2', 'confirm', 'icon-eye-2', 'icon-eye-off-2');
+    </script>
 
 </body>
 </html>
-

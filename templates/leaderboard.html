@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOTD — Leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --navy: #1a2e52;
+            --navy-mid: #243d6e;
+            --gold: #c9a84c;
+            --gold-light: #e8c84a;
+            --cream: #f9f8f6;
+            --cream-dark: #f0ede7;
+            --white: #ffffff;
+            --border: #ece9e3;
+            --text: #1a1816;
+            --text-mid: #6b6560;
+            --text-soft: #9b9590;
+            /* leaderboard compat aliases */
+            --navy-light: #3d5470;
+            --yellow: #e8c84a;
+            --yellow-muted: #f0d878;
+            --yellow-pale: #fdf6d3;
+            --text-dark: #1a1816;
+            --border-rgba: rgba(28,43,58,0.1);
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--cream);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+        }
+
+        /* ── NAV ── */
+        .page-header {
+            height: 64px;
+            padding: 0 36px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .logo-wordmark {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-style: italic;
+            color: var(--navy);
+            letter-spacing: 0.01em;
+            line-height: 1;
+        }
+
+        .logo-dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin-left: 1px;
+            vertical-align: middle;
+            position: relative;
+            top: -3px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 13px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-mid);
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover { background: var(--cream); color: var(--text); }
+
+        .nav-link.active {
+            background: var(--cream);
+            color: var(--text);
+        }
+
+        .nav-link svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--navy);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gold-light);
+            letter-spacing: 0.02em;
+        }
+
+        .logout-btn {
+            font-size: 12px;
+            color: var(--text-soft);
+            text-decoration: none;
+            padding: 5px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: color 0.2s, border-color 0.2s;
+            font-weight: 400;
+        }
+
+        .logout-btn:hover { color: var(--text); border-color: #b8b3aa; }
+
+        /* ── CONTAINER ── */
+        .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+        .section-heading { display: flex; align-items: baseline; gap: 10px; margin-bottom: 24px; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic; color: var(--text); }
+        .section-sub { font-size: 12px; color: var(--text-soft); letter-spacing: 0.04em; }
+        .section-divider { height: 0.5px; background: var(--border); margin: 44px 0 36px; }
+
+        /* ════════════════════════════════════
+           TOP 3 PODIUM
+        ════════════════════════════════════ */
+        .podium-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.15fr 1fr;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .podium-col { display: flex; flex-direction: column; }
+        .podium-label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; padding-left: 2px; }
+
+        .rank-number { font-family: 'Playfair Display', serif; font-size: 36px; line-height: 1; color: var(--text-soft); font-style: italic; }
+        .rank-number.gold { color: var(--gold); }
+
+        .rank-label-text { display: flex; flex-direction: column; gap: 1px; }
+        .rank-contributor { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-soft); }
+        .rank-username { font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; }
+        .rank-username:hover { color: var(--navy-light); }
+
+        .podium-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: var(--white); transition: box-shadow 0.25s; }
+        .podium-card:hover { box-shadow: 0 10px 36px rgba(28,43,58,0.1); }
+        .podium-card.first { border-color: rgba(201,168,76,0.5); box-shadow: 0 0 0 1px rgba(201,168,76,0.2), 0 8px 28px rgba(201,168,76,0.1); }
+
+        .podium-img-wrap { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: var(--cream-dark); }
+        .podium-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
+        .podium-card:hover .podium-img-wrap img { transform: scale(1.04); }
+        .podium-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--text-soft); opacity: 0.3; }
+
+        .podium-footer { padding: 12px 14px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .podium-votes { font-size: 12px; font-weight: 600; color: var(--text-soft); display: flex; align-items: center; gap: 4px; }
+        .podium-votes .tri { color: var(--gold); font-size: 10px; }
+
+        .upvote-form { margin: 0; }
+        .upvote-btn { display: flex; align-items: center; gap: 5px; background: transparent; border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-mid); cursor: pointer; transition: all 0.2s; }
+        .upvote-btn:hover { border-color: var(--gold); color: var(--navy); }
+        .upvote-btn.voted { border-color: var(--gold); color: var(--navy); background: var(--yellow-pale); }
+
+        /* ════════════════════════════════════
+           MOST RECENT
+        ════════════════════════════════════ */
+        .recent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 16px; }
+
+        .recent-card { border-radius: 14px; overflow: hidden; background: var(--white); border: 1px solid var(--border); transition: box-shadow 0.25s, transform 0.25s; }
+        .recent-card:hover { box-shadow: 0 8px 28px rgba(28,43,58,0.09); transform: translateY(-3px); }
+
+        .recent-img-wrap { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: var(--cream-dark); position: relative; }
+        .recent-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
+        .recent-card:hover .recent-img-wrap img { transform: scale(1.06); }
+        .recent-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--text-soft); opacity: 0.3; }
+
+        .card-actions { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.2s; }
+        .recent-card:hover .card-actions { opacity: 1; }
+        .card-action-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.22); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.25); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
+        .card-action-btn:hover { background: rgba(255,255,255,0.28); }
+        .card-action-btn svg { width: 14px; height: 14px; }
+
+        .recent-footer { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .recent-user { display: flex; align-items: center; gap: 7px; }
+        .recent-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--cream-dark); display: flex; align-items: center; justify-content: center; color: var(--text-soft); }
+        .recent-avatar svg { width: 12px; height: 12px; }
+        .recent-username { font-size: 11px; font-weight: 600; color: var(--text); }
+        .follow-btn { font-size: 8px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 9px; border-radius: 4px; border: 1px solid var(--border); background: var(--cream); color: var(--text-mid); cursor: pointer; transition: all 0.15s; }
+        .follow-btn:hover, .follow-btn.following { background: var(--navy); border-color: var(--navy); color: var(--white); }
+
+        /* ════════════════════════════════════
+           TREND TRACKER
+        ════════════════════════════════════ */
+        .trend-list { display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+
+        .trend-row { display: flex; align-items: center; gap: 20px; padding: 20px 24px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        .trend-row:last-child { border-bottom: none; }
+        .trend-row:hover { background: var(--cream); }
+
+        .trend-rank-num { font-family: 'Playfair Display', serif; font-style: italic; font-size: 28px; color: var(--text-soft); width: 28px; flex-shrink: 0; text-align: center; line-height: 1; }
+
+        .trend-thumb { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: var(--cream-dark); flex-shrink: 0; }
+        .trend-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .trend-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-soft); opacity: 0.3; }
+
+        .trend-info { flex: 1; min-width: 0; }
+        .trend-username { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); text-decoration: none; display: block; margin-bottom: 8px; }
+        .trend-username:hover { color: var(--navy-mid); }
+
+        .trend-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .trend-tag { font-size: 11px; font-weight: 500; color: var(--text-mid); background: var(--cream); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; text-decoration: none; display: flex; align-items: center; gap: 4px; transition: background 0.15s; }
+        .trend-tag-arrow { color: var(--navy-mid); font-size: 10px; }
+        .trend-tag:hover { background: var(--cream-dark); }
+
+        .trend-votes-col { text-align: right; flex-shrink: 0; min-width: 90px; }
+        .trend-vote-count { display: flex; align-items: center; gap: 5px; justify-content: flex-end; }
+        .trend-vote-triangle { color: var(--gold); font-size: 13px; }
+        .trend-vote-number { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--text); }
+        .trend-vote-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-soft); margin-top: 3px; }
+
+        /* ── Empty ── */
+        .empty-state { text-align: center; padding: 60px 0; }
+        .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
+        .empty-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: var(--text-soft); }
+
+        @media (max-width: 680px) {
+            .page-header { padding: 0 16px; }
+            .nav-links { display: none; }
+            .container { padding: 28px 16px 60px; }
+            .podium-grid { grid-template-columns: 1fr; }
+            .recent-grid { grid-template-columns: repeat(2, 1fr); }
+            .trend-row { gap: 12px; padding: 14px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<header class="page-header">
+    <a href="{{ url_for('home') }}" class="logo-wrap">
+        <span class="logo-wordmark">OOTD<span class="logo-dot"></span></span>
+    </a>
+
+    <nav class="nav-links">
+        <a href="{{ url_for('home') }}" class="nav-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </a>
+        <a href="{{ url_for('discover') }}" class="nav-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Discover
+        </a>
+        <a href="{{ url_for('leaderboard') }}" class="nav-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+            Leaderboard
+        </a>
+        <a href="{{ url_for('profile_self') }}#profile" class="nav-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </a>
+    </nav>
+
+    <div class="nav-right">
+        <div class="nav-avatar">{{ username[0].upper() }}</div>
+        <a class="logout-btn" href="{{ url_for('logout') }}">Sign out</a>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- TOP 3 -->
+    <div class="section-heading">
+        <h2 class="section-title">Outfits of the Day</h2>
+        <span class="section-sub">Top 3 Looks</span>
+    </div>
+
+    {% if top3 %}
+    {% set rank1 = top3[0] %}
+    {% set rank2 = top3[1] if top3|length > 1 else none %}
+    {% set rank3 = top3[2] if top3|length > 2 else none %}
+
+    <div class="podium-grid">
+
+        <!-- #2 LEFT -->
+        <div class="podium-col">
+            {% if rank2 %}
+            <div class="podium-label">
+                <span class="rank-number">#2</span>
+                <div class="rank-label-text">
+                    <span class="rank-contributor">Contributor</span>
+                    <a class="rank-username" href="{{ url_for('profile', uid=rank2.user_id) }}">@{{ rank2.userName or rank2.username }}</a>
+                </div>
+            </div>
+            <div class="podium-card">
+                <div class="podium-img-wrap">
+                    {% if rank2.imageUrl %}<img src="{{ rank2.imageUrl }}" alt="">
+                    {% elif rank2.photo_path %}<img src="{{ url_for('static', filename=rank2.photo_path) }}" alt="">
+                    {% else %}<div class="podium-img-placeholder">✦</div>{% endif %}
+                </div>
+                <div class="podium-footer">
+                    <div class="podium-votes"><span class="tri">▲</span> {{ rank2.votes }} votes</div>
+                    <form class="upvote-form" action="{{ url_for('upvote', post_id=rank2.id) }}" method="POST">
+                        <button class="upvote-btn {% if rank2.id in upvoted_ids %}voted{% endif %}" type="submit">▲ {{ rank2.votes }}</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- #1 CENTER -->
+        <div class="podium-col">
+            <div class="podium-label">
+                <span class="rank-number gold">#1</span>
+                <div class="rank-label-text">
+                    <span class="rank-contributor">Contributor</span>
+                    <a class="rank-username" href="{{ url_for('profile', uid=rank1.user_id) }}">@{{ rank1.userName or rank1.username }}</a>
+                </div>
+            </div>
+            <div class="podium-card first">
+                <div class="podium-img-wrap">
+                    {% if rank1.imageUrl %}<img src="{{ rank1.imageUrl }}" alt="">
+                    {% elif rank1.photo_path %}<img src="{{ url_for('static', filename=rank1.photo_path) }}" alt="">
+                    {% else %}<div class="podium-img-placeholder">✦</div>{% endif %}
+                </div>
+                <div class="podium-footer">
+                    <div class="podium-votes"><span class="tri">▲</span> {{ rank1.votes }} votes</div>
+                    <form class="upvote-form" action="{{ url_for('upvote', post_id=rank1.id) }}" method="POST">
+                        <button class="upvote-btn {% if rank1.id in upvoted_ids %}voted{% endif %}" type="submit">▲ {{ rank1.votes }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- #3 RIGHT -->
+        <div class="podium-col">
+            {% if rank3 %}
+            <div class="podium-label">
+                <span class="rank-number">#3</span>
+                <div class="rank-label-text">
+                    <span class="rank-contributor">Contributor</span>
+                    <a class="rank-username" href="{{ url_for('profile', uid=rank3.user_id) }}">@{{ rank3.userName or rank3.username }}</a>
+                </div>
+            </div>
+            <div class="podium-card">
+                <div class="podium-img-wrap">
+                    {% if rank3.imageUrl %}<img src="{{ rank3.imageUrl }}" alt="">
+                    {% elif rank3.photo_path %}<img src="{{ url_for('static', filename=rank3.photo_path) }}" alt="">
+                    {% else %}<div class="podium-img-placeholder">✦</div>{% endif %}
+                </div>
+                <div class="podium-footer">
+                    <div class="podium-votes"><span class="tri">▲</span> {{ rank3.votes }} votes</div>
+                    <form class="upvote-form" action="{{ url_for('upvote', post_id=rank3.id) }}" method="POST">
+                        <button class="upvote-btn {% if rank3.id in upvoted_ids %}voted{% endif %}" type="submit">▲ {{ rank3.votes }}</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">✦</div>
+        <p class="empty-text">No posts yet — be the first to upload a look!</p>
+    </div>
+    {% endif %}
+
+    <!-- MOST RECENT -->
+    <div class="section-divider"></div>
+    <div class="section-heading">
+        <h2 class="section-title">Most Recent</h2>
+        <span class="section-sub">Latest Looks Across All Campuses</span>
+    </div>
+
+    {% if rest %}
+    <div class="recent-grid">
+        {% for post in rest %}
+        <div class="recent-card">
+            <div class="recent-img-wrap">
+                {% if post.imageUrl %}<img src="{{ post.imageUrl }}" alt="">
+                {% elif post.photo_path %}<img src="{{ url_for('static', filename=post.photo_path) }}" alt="">
+                {% else %}<div class="recent-img-placeholder">✦</div>{% endif %}
+                <div class="card-actions">
+                    <button class="card-action-btn" onclick="submitUpvote({{ post.id }})" title="Upvote">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                    </button>
+                    <button class="card-action-btn" onclick="toggleLike(this)" title="Like">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="recent-footer">
+                <div class="recent-user">
+                    <div class="recent-avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <a class="recent-username" href="{{ url_for('profile', uid=post.user_id) }}">@{{ ((post.userName or post.username) | truncate(12, True, '…')) }}</a>
+                </div>
+                <button class="follow-btn" onclick="toggleFollow({{ post.user_id }}, this)">Follow</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">✦</div>
+        <p class="empty-text">No recent posts yet.</p>
+    </div>
+    {% endif %}
+
+    <!-- TREND TRACKER -->
+    <div class="section-divider"></div>
+    <div class="section-heading">
+        <h2 class="section-title">Trend Tracker</h2>
+        <span class="section-sub">Most Desired Items · Ranked by Votes</span>
+    </div>
+
+    {% if trend %}
+    <div class="trend-list">
+        {% for post in trend %}
+        <div class="trend-row">
+            <span class="trend-rank-num">{{ loop.index }}</span>
+            <div class="trend-thumb">
+                {% if post.imageUrl %}<img src="{{ post.imageUrl }}" alt="">
+                {% elif post.photo_path %}<img src="{{ url_for('static', filename=post.photo_path) }}" alt="">
+                {% else %}<div class="trend-thumb-placeholder">✦</div>{% endif %}
+            </div>
+            <div class="trend-info">
+                <a class="trend-username" href="{{ url_for('profile', uid=post.user_id) }}">@{{ post.userName or post.username }}</a>
+                <div class="trend-tags">
+                    {% if post.items %}
+                        {% for item in post['items'] %}
+                        <span class="trend-tag"><span class="trend-tag-arrow">↗</span>{{ item.name }}</span>
+                        {% endfor %}
+                    {% elif post.links %}
+                        {% for link in post.links.split(',') %}
+                            {% set lnk = link.strip() %}
+                            {% if lnk %}
+                            <a class="trend-tag" href="{{ lnk if lnk.startswith('http') else 'https://' + lnk }}" target="_blank" rel="noopener">
+                                <span class="trend-tag-arrow">↗</span>{{ lnk | truncate(22, True, '…') }}
+                            </a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="trend-votes-col">
+                <div class="trend-vote-count">
+                    <span class="trend-vote-triangle">▲</span>
+                    <span class="trend-vote-number">{{ post.votes }}</span>
+                </div>
+                <div class="trend-vote-label">Total Upvotes</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">✦</div>
+        <p class="empty-text">No trend data yet — upload looks and tag your items!</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+    function submitUpvote(postId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/upvote/${postId}`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function toggleLike(btn) {
+        btn.style.color = btn.style.color === 'rgb(231, 76, 60)' ? '' : 'rgb(231, 76, 60)';
+    }
+
+    async function toggleFollow(uid, btn) {
+        const res = await fetch(`/follow/${uid}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.status === 'followed') {
+            btn.textContent = 'Following'; btn.classList.add('following');
+        } else {
+            btn.textContent = 'Follow'; btn.classList.remove('following');
+        }
+    }
+</script>
+
+</body>
+</html>

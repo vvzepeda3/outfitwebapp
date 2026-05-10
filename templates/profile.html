@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ owner.username }}'s Profile</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a2e52;
+      --navy-light: #3d5470;
+      --gold: #c9a84c;
+      --gold-light: #e8c84a;
+      --cream: #f9f8f6;
+      --cream-dark: #f0ede7;
+      --white: #ffffff;
+      --border: #ece9e3;
+      --text: #1a1816;
+      --text-mid: #6b6560;
+      --text-soft: #9b9590;
+      --yellow-pale: #fdf6d3;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+    }
+
+    .page-header {
+      height: 64px;
+      padding: 0 28px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .logo-wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--navy);
+    }
+
+    .logo-dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-left: 2px;
+      position: relative;
+      top: -3px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: 0.15s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold-light);
+    }
+
+    .logout-btn {
+      font-size: 12px;
+      color: var(--text-soft);
+      text-decoration: none;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 42px 22px 80px;
+    }
+
+    .profile-hero {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .avatar-ring {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(201, 168, 76, 0.35);
+      background: rgba(201, 168, 76, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .avatar-initial {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .profile-username {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-style: italic;
+      color: var(--navy);
+      font-weight: 400;
+    }
+
+    .profile-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .meta-item {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .meta-item span {
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 28px;
+    }
+
+    .sort-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .sort-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .sort-btn {
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-mid);
+      text-decoration: none;
+    }
+
+    .sort-btn.active {
+      background: var(--navy);
+      color: var(--gold-light);
+      border-color: var(--navy);
+    }
+
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 18px;
+    }
+
+    .post-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: 0.2s;
+    }
+
+    .post-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(28,43,58,0.06);
+    }
+
+    .post-img-wrap {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--cream-dark);
+      overflow: hidden;
+    }
+
+    .post-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-img-placeholder {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: var(--text-soft);
+      opacity: 0.35;
+    }
+
+    .post-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .post-caption {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.55;
+    }
+
+    .post-links {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .post-link {
+      font-size: 11px;
+      color: var(--navy-light);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post-footer {
+      padding: 10px 16px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .post-date {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .vote-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .upvote-form,
+    .delete-form {
+      margin: 0;
+    }
+
+    .upvote-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .upvote-btn.voted {
+      background: var(--yellow-pale);
+      border-color: var(--gold);
+      color: var(--navy);
+    }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: rgba(28,43,58,0.28);
+      font-size: 13px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 72px 0;
+      color: var(--text-soft);
+    }
+
+    .empty-text {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 16px;
+    }
+
+    @media (max-width: 720px) {
+      .page-header {
+        padding: 0 16px;
+      }
+
+      .nav-links {
+        gap: 4px;
+      }
+
+      .nav-link {
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+
+      .profile-hero {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <a href="{{ url_for('home') }}" class="logo-wrap">
+    <span class="logo-wordmark">OOTD<span class="logo-dot"></span></span>
+  </a>
+
+  <nav class="nav-links">
+    <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+    <a href="{{ url_for('discover') }}" class="nav-link">Discover</a>
+    <a href="{{ url_for('leaderboard') }}" class="nav-link">Leaderboard</a>
+    <a href="{{ url_for('profile_self') }}" class="nav-link active">Profile</a>
+  </nav>
+
+  <div class="nav-right">
+    <div class="nav-avatar">{{ current_username[0].upper() }}</div>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Sign out</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="profile-hero">
+    <div class="avatar-ring">
+      <span class="avatar-initial">{{ owner.username[0].upper() }}</span>
+    </div>
+
+    <div>
+      <h1 class="profile-username">{{ owner.username }}</h1>
+      <div class="profile-meta">
+        <div class="meta-item"><span>{{ stats.post_count }}</span> posts</div>
+        <div class="meta-item"><span>{{ stats.total_votes }}</span> upvotes received</div>
+        <div class="meta-item">{{ owner.campus }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  {% if posts %}
+
+  <div class="sort-bar">
+    <span class="sort-label">Sort by</span>
+    <a class="sort-btn {% if sort == 'newest' %}active{% endif %}" href="{{ url_for('profile', uid=owner.id, sort='newest') }}">Newest</a>
+    <a class="sort-btn {% if sort == 'popular' %}active{% endif %}" href="{{ url_for('profile', uid=owner.id, sort='popular') }}">Most Popular</a>
+  </div>
+
+  <div class="posts-grid">
+    {% for post in posts %}
+    <div class="post-card">
+
+      <div class="post-img-wrap">
+        {% if post.photo_path %}
+          <img src="{{ url_for('static', filename=post.photo_path) }}" alt="Outfit photo">
+        {% else %}
+          <div class="post-img-placeholder">✦</div>
+        {% endif %}
+      </div>
+
+      <div class="post-body">
+        {% if post.caption %}
+          <p class="post-caption">{{ post.caption }}</p>
+        {% endif %}
+
+        {% if post.links %}
+        <div class="post-links">
+          {% for link in post.links.split(',') %}
+            {% set link = link.strip() %}
+            {% if link %}
+              <a class="post-link"
+                 href="{{ url_for('track_link', post_id=post.id, url=link) }}"
+                 target="_blank" rel="noopener">
+                 ↗ {{ link | truncate(38, True, '…') }}
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="post-footer">
+        <span class="post-date">{{ post.created_at[:10] if post.created_at else '' }}</span>
+
+        <div class="vote-row">
+          <form class="upvote-form" action="{{ url_for('upvote', post_id=post.id) }}" method="POST">
+            <button class="upvote-btn {% if post.id in upvoted_ids %}voted{% endif %}" type="submit">
+              ▲ {{ post.votes }}
+            </button>
+          </form>
+
+          {% if is_own_profile %}
+          <form class="delete-form"
+                action="{{ url_for('delete_post', post_id=post.id) }}"
+                method="POST"
+                onsubmit="return confirm('Delete this post?')">
+            <button class="delete-btn" type="submit">✕</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+
+  <div class="empty-state">
+    <div>✦</div>
+    <p class="empty-text">
+      {% if is_own_profile %}
+        You haven't posted anything yet.
+      {% else %}
+        {{ owner.username }} hasn't posted yet.
+      {% endif %}
+    </p>
+  </div>
+
+  {% endif %}
+
+  <!-- ── LIKED POSTS — private, only shown to the profile owner ── -->
+  {% if is_own_profile %}
+  <div class="section-divider" style="margin-top: 52px;"></div>
+
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom: 24px;">
+    <span style="font-size:16px; color:#c9a84c;">♡</span>
+    <h2 style="font-family:'Playfair Display',serif; font-size:18px; font-style:italic; font-weight:400; color:var(--navy);">Liked Posts</h2>
+    <span style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-soft); background:var(--cream-dark); padding:3px 10px; border-radius:20px; border:1px solid var(--border);">Only visible to you</span>
+  </div>
+
+  {% if liked_posts %}
+  <div class="posts-grid">
+    {% for post in liked_posts %}
+    <div class="post-card">
+
+      <div class="post-img-wrap">
+        {% if post.photo_path %}
+          <img src="{{ url_for('static', filename=post.photo_path) }}" alt="Outfit photo">
+        {% else %}
+          <div class="post-img-placeholder">✦</div>
+        {% endif %}
+      </div>
+
+      <div class="post-body">
+        {% if post.caption %}
+          <p class="post-caption">{{ post.caption }}</p>
+        {% endif %}
+
+        {% if post.links %}
+        <div class="post-links">
+          {% for link in post.links.split(',') %}
+            {% set link = link.strip() %}
+            {% if link %}
+              <a class="post-link"
+                 href="{{ url_for('track_link', post_id=post.id, url=link) }}"
+                 target="_blank" rel="noopener">
+                 ↗ {{ link | truncate(38, True, '…') }}
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="post-footer">
+        <div>
+          <span class="post-date">{{ post.created_at[:10] if post.created_at else '' }}</span>
+          <a href="{{ url_for('profile', uid=post.user_id) }}"
+             style="display:block; font-size:11px; color:var(--navy-light); text-decoration:none; margin-top:2px;">
+            @{{ post.userName }}
+          </a>
+        </div>
+
+        <div class="vote-row">
+          <form class="upvote-form" action="{{ url_for('upvote', post_id=post.id) }}" method="POST">
+            <button class="upvote-btn {% if post.id in upvoted_ids %}voted{% endif %}" type="submit">
+              ▲ {{ post.votes }}
+            </button>
+          </form>
+          <form action="{{ url_for('like_post', post_id=post.id) }}" method="POST" style="margin:0;">
+            <button type="submit"
+                    style="background:transparent; border:none; cursor:pointer; font-size:15px; color:#c9a84c; line-height:1;"
+                    title="Unlike">♥</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <p class="empty-text">Posts you like will appear here.</p>
+  </div>
+  {% endif %}
+
+  {% endif %}
+  <!-- END LIKED POSTS -->
+
+</div>
+
+</body>
+</html>
