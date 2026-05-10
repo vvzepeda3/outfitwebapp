@@ -164,8 +164,8 @@ def attach_items_to_posts(conn, posts_list):
             cur.execute("SELECT id, name, brand FROM items WHERE post_id = %s", (post["id"],))
             db_items = cur.fetchall()
         post_dict["items"]    = [{"id": i["id"], "name": i["name"], "brand": i["brand"]} for i in db_items]
-post_dict["imageUrl"] = post["photo_path"] if post["photo_path"] else ""        post_dict["userName"] = post.get("username", "")
-
+        post_dict["imageUrl"] = post["photo_path"] if post["photo_path"] else ""
+        post_dict["userName"] = post.get("username", "")
         if post_dict.get("links"):
             with conn.cursor() as cur:
                 cur.execute(
