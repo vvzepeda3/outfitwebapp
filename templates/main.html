@@ -944,8 +944,7 @@
                 <div class="post-card">
                     <div class="post-img-wrap">
                         {% if post.photo_path %}
-                            <img src="{{ url_for('static', filename=post.photo_path) }}" alt="Outfit">
-                        {% else %}
+                        <img src="{{ post.imageUrl }}" alt="Outfit">                        {% else %}
                             <div class="post-img-placeholder">✦</div>
                         {% endif %}
                     </div>
@@ -1019,8 +1018,7 @@
                 <div class="post-card">
                     <div class="post-img-wrap">
                         {% if post.photo_path %}
-                            <img src="{{ url_for('static', filename=post.photo_path) }}" alt="Outfit">
-                        {% else %}
+                        <img src="{{ post.imageUrl }}" alt="Outfit">                        {% else %}
                             <div class="post-img-placeholder">✦</div>
                         {% endif %}
                     </div>
@@ -1085,7 +1083,7 @@
                     </div>
                     <div class="podium-img-wrap">
                         {% if post.photo_path %}
-                            <img src="{{ url_for('static', filename=post.photo_path) }}" alt="Outfit">
+                            <img src="{{ post.imageUrl }}" alt="Outfit">
                         {% else %}
                             <div class="podium-img-placeholder">✦</div>
                         {% endif %}
@@ -1143,7 +1141,7 @@
                 <div class="recent-row">
                     <div class="recent-thumb">
                         {% if post.photo_path %}
-                            <img src="{{ url_for('static', filename=post.photo_path) }}" alt="">
+                            <img src="{{ post.imageUrl }}" alt="">
                         {% else %}
                             <div class="recent-thumb-placeholder">✦</div>
                         {% endif %}

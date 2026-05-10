@@ -414,7 +414,7 @@
         <div class="recent-card">
             <div class="recent-img-wrap">
                 {% if post.imageUrl %}<img src="{{ post.imageUrl }}" alt="">
-                {% elif post.photo_path %}<img src="{{ url_for('static', filename=post.photo_path) }}" alt="">
+                {% elif post.photo_path %}<img src="{{ post.imageUrl }}" alt="">
                 {% else %}<div class="recent-img-placeholder">✦</div>{% endif %}
                 <div class="card-actions">
                     <button class="card-action-btn" onclick="submitUpvote({{ post.id }})" title="Upvote">
@@ -458,7 +458,7 @@
             <span class="trend-rank-num">{{ loop.index }}</span>
             <div class="trend-thumb">
                 {% if post.imageUrl %}<img src="{{ post.imageUrl }}" alt="">
-                {% elif post.photo_path %}<img src="{{ url_for('static', filename=post.photo_path) }}" alt="">
+                {% elif post.photo_path %}<img src="{{ post.imageUrl }}" alt="">
                 {% else %}<div class="trend-thumb-placeholder">✦</div>{% endif %}
             </div>
             <div class="trend-info">

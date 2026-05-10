@@ -423,7 +423,7 @@
 
       <div class="post-img-wrap">
         {% if post.photo_path %}
-          <img src="{{ url_for('static', filename=post.photo_path) }}" alt="Outfit photo">
+        <img src="{{ post.imageUrl }}" alt="Outfit photo">
         {% else %}
           <div class="post-img-placeholder">✦</div>
         {% endif %}
@@ -507,7 +507,7 @@
 
       <div class="post-img-wrap">
         {% if post.photo_path %}
-          <img src="{{ url_for('static', filename=post.photo_path) }}" alt="Outfit photo">
+          <img src="{{ post.imageUrl }}" alt="Outfit photo">
         {% else %}
           <div class="post-img-placeholder">✦</div>
         {% endif %}
